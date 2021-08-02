@@ -1,0 +1,59 @@
+pipeline {
+  agent any
+  environment {
+    COURSE = 'Calgary DevOps'
+    BRANCH = 'main'
+    WWWROOT = '/var/www'
+    SSHUSER = 'jenkins'
+    SSHKEY = '/var/lib/jenkins/.ssh/first-key.pem'
+    WEBSERVER = 'ec2web01'
+  }
+  stages {
+    stage('Audit Tools') {
+      steps {
+        echo "Audit all tools to be use on this pipeline ${BRANCH}"
+        sh "git --version"
+        sh "node --version"
+        sh "npm --version"
+        sh "ng --version"
+        sh "ansible --version"
+        echo "Workspace Folder: ${WORKSPACE}"
+      }
+    }
+    stage('Install packages') {
+      steps {
+        sh "git pull origin ${BRANCH}"
+      }
+    }
+    stage('Install Front-End Packages') {
+      steps {
+        dir("${WORKSPACE}/conduit-ui") {
+          echo "Install conduit UI packages"
+          sh "npm install"
+        }
+      }
+    }
+    stage('Run linting') {
+      steps {
+        dir("${WORKSPACE}/conduit-ui") {
+          echo "npm run lint"
+        }
+      }
+    }
+    stage('Build UI') {
+      steps {
+        dir("${WORKSPACE}/conduit-ui") {
+          sh "npm run build"
+        }
+      }
+    }
+    stage('Deploy app to WEB01') {
+      steps {
+        sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} rm -rf /home/${SSHUSER}/conduit"
+        sh "sudo scp -i ${SSHKEY} -r ${WORKSPACE}/conduit-ui/dist ${SSHUSER}@${WEBSERVER}:/home/${SSHUSER}/conduit"
+        sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} sudo rm -rf ${WWWROOT}/conduit"
+        sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} sudo cp -r /home/${SSHUSER}/conduit ${WWWROOT}/conduit"
+      }
+    }
+  }
+}
