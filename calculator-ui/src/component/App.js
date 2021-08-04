@@ -18,9 +18,6 @@ export default class App extends React.Component {
   render() {
     return (
       <div className="component-app">
-        <h3 className="m-3 d-flex justify-content-center">
-          COMIT Calculator
-        </h3>
         <Display value={this.state.next || this.state.total || "0"} />
         <ButtonPanel clickHandler={this.handleClick} />
       </div>
