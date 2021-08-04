@@ -51,8 +51,8 @@ pipeline {
       steps {
         sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} rm -rf /home/${SSHUSER}/calculator"
         sh "sudo scp -i ${SSHKEY} -r ${WORKSPACE}/calculator-ui ${SSHUSER}@${WEBSERVER}:/home/${SSHUSER}/calculator"
-        sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} sudo rm -rf ${WWWROOT}/conduit"
-        sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} sudo cp -r /home/${SSHUSER}/conduit ${WWWROOT}/calculator"
+        sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} sudo rm -rf ${WWWROOT}/calculator"
+        sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} sudo cp -r /home/${SSHUSER}/calculator ${WWWROOT}/calculator"
       }
     }
   }
