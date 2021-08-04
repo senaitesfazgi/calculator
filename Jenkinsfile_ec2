@@ -28,7 +28,7 @@ pipeline {
     stage('Install Front-End Packages') {
       steps {
         dir("${WORKSPACE}/calculator-ui") {
-          echo "Install conduit UI packages"
+          echo "Install calculator UI packages"
           sh "npm install"
         }
       }
@@ -50,7 +50,7 @@ pipeline {
     stage('Deploy app to WEB02') {
       steps {
         sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} rm -rf /home/${SSHUSER}/calculator"
-        sh "sudo scp -i ${SSHKEY} -r ${WORKSPACE}/calculator-ui/dist ${SSHUSER}@${WEBSERVER}:/home/${SSHUSER}/calculator"
+        sh "sudo scp -i ${SSHKEY} -r ${WORKSPACE}/calculator-ui ${SSHUSER}@${WEBSERVER}:/home/${SSHUSER}/calculator"
         sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} sudo rm -rf ${WWWROOT}/conduit"
         sh "sudo ssh -i ${SSHKEY} ${SSHUSER}@${WEBSERVER} sudo cp -r /home/${SSHUSER}/conduit ${WWWROOT}/calculator"
       }
